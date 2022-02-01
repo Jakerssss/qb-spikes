@@ -9,7 +9,7 @@ AddEventHandler("spikestrips:client:usespikes", function(config)
     Citizen.Wait(1700)
     ClearPedTasksImmediately(PlayerPedId())
     CreateSpikes(Config.Amount)
-    TriggerServerEvent("QBCore:Server:RemoveItem", "policespikes", Config.Amount)
+    TriggerServerEvent("QBCore:Server:RemoveItem", "policespikes", 1)
     TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["policespikes"], "remove")
 end)
 
