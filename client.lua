@@ -9,20 +9,25 @@ AddEventHandler("spikestrips:client:usespikes", function(config)
     Citizen.Wait(1700)
     ClearPedTasksImmediately(PlayerPedId())
     CreateSpikes(Config.Amount)
-    TriggerServerEvent("QBCore:Server:RemoveItem", "policespikes", 1)
-    TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["policespikes"], "remove")
+    TriggerServerEvent("qb-spikes-use")
 end)
 
-RegisterNetEvent("Spikes:DeleteSpikes")
-AddEventHandler("Spikes:DeleteSpikes", function(netid)
+
+RegisterCommand("RemoveSpikes",function()
+    for a = 1, #SpawnedSpikes do
+        TriggerServerEvent("qb-spikes-remove", SpawnedSpikes[a])
+    end
+    SpawnedSpikes = {}
+end)
+
+RegisterNetEvent("qb-spikes-delete")
+AddEventHandler("qb-spikes-delete", function(netid)
     Citizen.CreateThread(function()
         Animation()
         Citizen.Wait(1700)
         ClearPedTasksImmediately(PlayerPedId())
         local spike = NetworkGetEntityFromNetworkId(netid)
         DeleteEntity(spike)
-        TriggerServerEvent("QBCore:Server:AddItem", "policespikes", 1)
-        TriggerEvent('inventory:client:ItemBox', QBCore.Shared.Items["policespikes"], "add")
     end)
 end)
 
@@ -97,26 +102,16 @@ function CreateSpikes(amount)
     end
 end
 
-RegisterCommand("RemoveSpikes",function()
-    for a = 1, #SpawnedSpikes do
-        TriggerServerEvent("Spikes:TriggerDeleteSpikes", SpawnedSpikes[a])
+function loadAnimDict( dict )
+    while ( not HasAnimDictLoaded( dict ) ) do
+        RequestAnimDict( dict )
+        Citizen.Wait( 5 )
     end
-    SpawnedSpikes = {}
-end)
-
-function loadAnimDict(dict)
-	while(not HasAnimDictLoaded(dict)) do
-		RequestAnimDict(dict)
-		Citizen.Wait(1)
-	end
 end
 
 function Animation()
-	local ped 	  = PlayerPedId()
-	local coords  = GetEntityCoords(ped)
-    
-	loadAnimDict("pickup_object")
-	TaskPlayAnim(ped, "pickup_object", "pickup_low", 1.0, 1, -1, 33, 0, 0, 0, 0)
+	loadAnimDict( "pickup_object" )
+    TaskPlayAnim( PlayerPedId(), "pickup_object", "pickup_low", 1.0, 1, -1, 33, 0, 0, 0, 0)
 end
 
 local spikestrips = {
