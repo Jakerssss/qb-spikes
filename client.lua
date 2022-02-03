@@ -15,6 +15,7 @@ end)
 
 RegisterCommand("RemoveSpikes",function()
     for a = 1, #SpawnedSpikes do
+        Animation()
         TriggerServerEvent("qb-spikes-remove", SpawnedSpikes[a])
     end
     SpawnedSpikes = {}
@@ -22,13 +23,10 @@ end)
 
 RegisterNetEvent("qb-spikes-delete")
 AddEventHandler("qb-spikes-delete", function(netid)
-    Citizen.CreateThread(function()
-        Animation()
-        Citizen.Wait(1700)
-        ClearPedTasksImmediately(PlayerPedId())
-        local spike = NetworkGetEntityFromNetworkId(netid)
-        DeleteEntity(spike)
-    end)
+    Citizen.Wait(1700)
+    ClearPedTasksImmediately(PlayerPedId())
+    local spike = NetworkGetEntityFromNetworkId(netid)
+    DeleteEntity(spike)
 end)
 
 Citizen.CreateThread(function()
@@ -111,7 +109,7 @@ end
 
 function Animation()
 	loadAnimDict( "pickup_object" )
-    TaskPlayAnim( PlayerPedId(), "pickup_object", "pickup_low", 1.0, 1, -1, 33, 0, 0, 0, 0)
+    TaskPlayAnim(PlayerPedId(), "pickup_object", "pickup_low", 1.0, 1, -1, 33, 0, 0, 0, 0)
 end
 
 local spikestrips = {
